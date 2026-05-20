@@ -37,12 +37,14 @@ char* jfn_settings_get_audio_passthrough(void);
 char* jfn_settings_get_audio_channels(void);
 char* jfn_settings_get_log_level(void);
 char* jfn_settings_get_device_name(void);
+char* jfn_settings_get_ui_zoom(void);
 
 void jfn_settings_set_server_url(const char* v);
 void jfn_settings_set_hwdec(const char* v);
 void jfn_settings_set_audio_passthrough(const char* v);
 void jfn_settings_set_audio_channels(const char* v);
 void jfn_settings_set_log_level(const char* v);
+void jfn_settings_set_ui_zoom(const char* v);
 // Trims whitespace, truncates to 64 chars, and clears the override if it
 // matches `platform_default`.
 void jfn_settings_set_device_name(const char* v, const char* platform_default);
@@ -52,12 +54,14 @@ bool jfn_settings_get_disable_gpu_compositing(void);
 bool jfn_settings_get_titlebar_theme_color(void);
 bool jfn_settings_get_transparent_titlebar(void);
 bool jfn_settings_get_force_transcoding(void);
+bool jfn_settings_get_launch_fullscreen(void);
 
 void jfn_settings_set_audio_exclusive(bool v);
 void jfn_settings_set_disable_gpu_compositing(bool v);
 void jfn_settings_set_titlebar_theme_color(bool v);
 void jfn_settings_set_transparent_titlebar(bool v);
 void jfn_settings_set_force_transcoding(bool v);
+void jfn_settings_set_launch_fullscreen(bool v);
 
 void jfn_settings_get_window_geometry(JfnWindowGeometry* out);
 void jfn_settings_set_window_geometry(const JfnWindowGeometry* in_);

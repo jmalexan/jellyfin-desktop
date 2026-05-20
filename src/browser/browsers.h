@@ -82,3 +82,9 @@ extern WebBrowser* g_web_browser;
 inline void release_layer(CefLayer* layer) {
     if (g_browsers && layer) g_browsers->remove(layer);
 }
+
+// Apply the user-configured UI zoom (percentage string from settings) to
+// `layer`. No-op when the value is empty or parses to 100. Called from each
+// business browser's createdCallback so the zoom is in place before the
+// first paint.
+void apply_saved_ui_zoom(CefLayer* layer);

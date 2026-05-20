@@ -2,11 +2,30 @@
 
 #include "../input/dispatch.h"
 #include "../platform/platform.h"
+#include "../settings.h"
 #include "logging.h"
 
 #include <algorithm>
+#include <cmath>
+#include <string>
 
 Browsers* g_browsers = nullptr;
+
+void apply_saved_ui_zoom(CefLayer* layer) {
+    if (!layer) return;
+    std::string s = Settings::instance().uiZoom();
+    double percent = 100.0;
+    if (!s.empty()) {
+        try { percent = std::stod(s); }
+        catch (...) { percent = 100.0; }
+        if (percent <= 0.0) percent = 100.0;
+    }
+    // CEF zoom: factor = 1.2^level → level = log(factor) / log(1.2).
+    // 100% maps to level 0, which is also the CEF default — safe to set
+    // unconditionally so a runtime change back to 100% resets the page.
+    double level = std::log(percent / 100.0) / std::log(1.2);
+    layer->setZoomLevel(level);
+}
 
 Browsers::Browsers(int lw, int lh, int pw, int ph,
                    double frame_rate, bool use_shared_textures)

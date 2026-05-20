@@ -116,6 +116,13 @@ static void applySettingValue(const std::string& section, const std::string& key
     else if (key == "audioChannels") s.setAudioChannels(value);
     else if (key == "titlebarThemeColor") s.setTitlebarThemeColor(value == "true");
     else if (key == "logLevel") s.setLogLevel(value);
+    else if (key == "launchFullscreen") s.setLaunchFullscreen(value == "true");
+    else if (key == "uiZoom") {
+        s.setUiZoom(value);
+        if (g_browsers) {
+            for (auto& l : g_browsers->layers()) apply_saved_ui_zoom(l.get());
+        }
+    }
     else if (key == "deviceName") s.setDeviceName(value);
     else LOG_WARN(LOG_CEF, "Unknown setting key: {}.{}", section.c_str(), key.c_str());
     s.saveAsync();
@@ -141,6 +148,7 @@ OverlayBrowser::OverlayBrowser(CefRefPtr<CefLayer> layer, WebBrowser& main_brows
     });
     CefRefPtr<CefLayer> layer_ref = layer_;
     layer_->setCreatedCallback([layer_ref]() {
+        apply_saved_ui_zoom(layer_ref.get());
         // Overlay wins input whenever it's created.
         if (g_browsers) g_browsers->setActive(layer_ref);
     });

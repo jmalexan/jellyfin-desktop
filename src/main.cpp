@@ -675,6 +675,7 @@ int main(int argc, char* argv[]) {
     boot.geometry                 = boot_geometry.c_str();
     boot.force_window_position    = boot_force_position;
     boot.window_maximized_at_boot = boot_window_max;
+    boot.fullscreen_at_boot       = saved.launchFullscreen();
     boot.mpv_log_level            = mpv_log_level;
 
     mpv_handle* raw = jfn_mpv_handle_init(&boot);

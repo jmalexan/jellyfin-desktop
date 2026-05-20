@@ -1526,6 +1526,15 @@ pub unsafe extern "C" fn jfn_cef_layer_set_focus(h: *const JfnCefLayer, focus: b
     }
 }
 
+/// Set the CEF zoom level on this layer's browser. The CEF zoom factor
+/// is `1.2^level`, so e.g. 0 = 100%, ~1.22 = 125%, ~3.80 = 200%.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn jfn_cef_layer_set_zoom_level(h: *const JfnCefLayer, level: f64) {
+    if let Some(host) = unsafe { arc(h) }.host() {
+        host.set_zoom_level(level);
+    }
+}
+
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn jfn_cef_layer_send_key_event(
     h: *const JfnCefLayer,

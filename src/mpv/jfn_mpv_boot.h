@@ -24,6 +24,7 @@ typedef struct {
     const char* geometry;             // may be NULL
     bool        force_window_position;
     bool        window_maximized_at_boot;
+    bool        fullscreen_at_boot;
     // libmpv log-message subscription level: "no", "error", "warn",
     // "info", "v", "debug", "trace". NULL or empty = no subscription.
     const char* mpv_log_level;

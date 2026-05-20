@@ -87,6 +87,12 @@ public:
     bool forceTranscoding() const { return jfn_settings_get_force_transcoding(); }
     void setForceTranscoding(bool v) { jfn_settings_set_force_transcoding(v); }
 
+    bool launchFullscreen() const { return jfn_settings_get_launch_fullscreen(); }
+    void setLaunchFullscreen(bool v) { jfn_settings_set_launch_fullscreen(v); }
+
+    std::string uiZoom() const { return takeString(jfn_settings_get_ui_zoom()); }
+    void setUiZoom(const std::string& v) { jfn_settings_set_ui_zoom(v.c_str()); }
+
     std::string deviceName() const { return takeString(jfn_settings_get_device_name()); }
     void setDeviceName(const std::string& v) {
         jfn_settings_set_device_name(v.c_str(), platformDeviceName().c_str());

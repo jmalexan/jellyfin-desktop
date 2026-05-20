@@ -40,6 +40,7 @@ AboutBrowser::AboutBrowser()
     });
     CefRefPtr<CefLayer> layer_ref = layer_;
     layer_->setCreatedCallback([layer_ref]() {
+        apply_saved_ui_zoom(layer_ref.get());
         if (g_browsers) g_browsers->setActive(layer_ref);
     });
     layer_->setContextMenuBuilder(&app_menu::build);

@@ -83,13 +83,18 @@
         userAgent: navigator.userAgent,
         scriptPath: '',
         sections: [
-            { key: 'playback', order: 0 },
-            { key: 'audio', order: 1 },
-            { key: 'transcode', order: 2 },
-            { key: 'advanced', order: 3 }
+            { key: 'display', order: 0 },
+            { key: 'playback', order: 1 },
+            { key: 'audio', order: 2 },
+            { key: 'transcode', order: 3 },
+            { key: 'advanced', order: 4 }
         ],
         settings: {
             main: { enableMPV: true, fullscreen: false, userWebClient: '__SERVER_URL__' },
+            display: {
+                launchFullscreen: !!_savedSettings.launchFullscreen,
+                uiZoom: _savedSettings.uiZoom || '100'
+            },
             playback: {
                 hwdec: _savedSettings.hwdec || 'auto'
             },
@@ -109,6 +114,19 @@
             }
         },
         settingsDescriptions: {
+            display: [
+                { key: 'launchFullscreen', displayName: 'Launch in Fullscreen', help: 'Open the application in fullscreen mode on every launch.' },
+                { key: 'uiZoom', displayName: 'UI Zoom', help: 'Zoom level for the Jellyfin web UI. Use this if the interface appears too small on a HiDPI display.', options: [
+                    { value: '75', title: '75%' },
+                    { value: '100', title: '100%' },
+                    { value: '125', title: '125%' },
+                    { value: '150', title: '150%' },
+                    { value: '175', title: '175%' },
+                    { value: '200', title: '200%' },
+                    { value: '250', title: '250%' },
+                    { value: '300', title: '300%' }
+                ]}
+            ],
             playback: [
                 { key: 'hwdec', displayName: 'Hardware Decoding', help: 'Hardware video decoding mode. Use "auto" for automatic detection or "no" to disable.', options: _savedSettings.hwdecOptions }
             ],

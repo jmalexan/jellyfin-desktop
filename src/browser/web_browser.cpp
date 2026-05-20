@@ -69,6 +69,13 @@ static void applySettingValue(const std::string& section, const std::string& key
     else if (key == "titlebarThemeColor") s.setTitlebarThemeColor(value == "true");
     else if (key == "logLevel") s.setLogLevel(value);
     else if (key == "forceTranscoding") s.setForceTranscoding(value == "true");
+    else if (key == "launchFullscreen") s.setLaunchFullscreen(value == "true");
+    else if (key == "uiZoom") {
+        s.setUiZoom(value);
+        if (g_browsers) {
+            for (auto& l : g_browsers->layers()) apply_saved_ui_zoom(l.get());
+        }
+    }
     else if (key == "deviceName") s.setDeviceName(value);
     else LOG_WARN(LOG_CEF, "Unknown setting key: {}.{}", section.c_str(), key.c_str());
     s.saveAsync();
@@ -96,6 +103,7 @@ WebBrowser::WebBrowser(CefRefPtr<CefLayer> layer)
     });
     CefRefPtr<CefLayer> layer_ref = layer_;
     layer_->setCreatedCallback([layer_ref]() {
+        apply_saved_ui_zoom(layer_ref.get());
         // Main browser takes input only if no other layer has already
         // claimed it (e.g. the server-selection overlay).
         if (g_browsers && !g_browsers->active())

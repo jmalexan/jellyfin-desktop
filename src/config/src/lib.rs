@@ -17,6 +17,7 @@ use std::thread;
 
 const DEVICE_NAME_MAX: usize = 64;
 const HWDEC_DEFAULT: &str = "no";
+const UI_ZOOM_DEFAULT: &str = "100";
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
@@ -60,6 +61,11 @@ struct SettingsData {
     titlebar_theme_color: bool,
     transparent_titlebar: bool,
     force_transcoding: bool,
+    launch_fullscreen: bool,
+    /// UI zoom override applied via CEF SetZoomLevel. Stored as the
+    /// percentage string ("100", "125", …) the UI presents; the consumer
+    /// parses to a float. Empty/invalid is treated as 100%.
+    ui_zoom: String,
 }
 
 impl Default for SettingsData {
@@ -77,6 +83,8 @@ impl Default for SettingsData {
             titlebar_theme_color: true,
             transparent_titlebar: true,
             force_transcoding: false,
+            launch_fullscreen: false,
+            ui_zoom: String::new(),
         }
     }
 }
@@ -147,6 +155,12 @@ impl SettingsData {
         if let Some(b) = v.get("forceTranscoding").and_then(Value::as_bool) {
             self.force_transcoding = b;
         }
+        if let Some(b) = v.get("launchFullscreen").and_then(Value::as_bool) {
+            self.launch_fullscreen = b;
+        }
+        if let Some(s) = v.get("uiZoom").and_then(Value::as_str) {
+            self.ui_zoom = s.into();
+        }
     }
 
     fn to_json(&self) -> Value {
@@ -207,6 +221,12 @@ impl SettingsData {
         if self.force_transcoding {
             o.insert("forceTranscoding".into(), Value::Bool(true));
         }
+        if self.launch_fullscreen {
+            o.insert("launchFullscreen".into(), Value::Bool(true));
+        }
+        if !self.ui_zoom.is_empty() && self.ui_zoom != UI_ZOOM_DEFAULT {
+            o.insert("uiZoom".into(), Value::String(self.ui_zoom.clone()));
+        }
         if !self.device_name.is_empty() {
             o.insert("deviceName".into(), Value::String(self.device_name.clone()));
         }
@@ -248,6 +268,18 @@ impl SettingsData {
         o.insert(
             "forceTranscoding".into(),
             Value::Bool(self.force_transcoding),
+        );
+        o.insert(
+            "launchFullscreen".into(),
+            Value::Bool(self.launch_fullscreen),
+        );
+        o.insert(
+            "uiZoom".into(),
+            Value::String(if self.ui_zoom.is_empty() {
+                UI_ZOOM_DEFAULT.into()
+            } else {
+                self.ui_zoom.clone()
+            }),
         );
         if !self.device_name.is_empty() {
             o.insert("deviceName".into(), Value::String(self.device_name.clone()));
@@ -503,6 +535,10 @@ bool_getter!(jfn_settings_get_transparent_titlebar, transparent_titlebar);
 bool_setter!(jfn_settings_set_transparent_titlebar, transparent_titlebar);
 bool_getter!(jfn_settings_get_force_transcoding, force_transcoding);
 bool_setter!(jfn_settings_set_force_transcoding, force_transcoding);
+bool_getter!(jfn_settings_get_launch_fullscreen, launch_fullscreen);
+bool_setter!(jfn_settings_set_launch_fullscreen, launch_fullscreen);
+string_getter!(jfn_settings_get_ui_zoom, ui_zoom);
+string_setter!(jfn_settings_set_ui_zoom, ui_zoom);
 
 /// Copy the window geometry into `out`.
 ///

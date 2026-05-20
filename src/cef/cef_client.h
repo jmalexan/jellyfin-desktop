@@ -75,6 +75,7 @@ bool         jfn_cef_layer_can_go_forward(const JfnCefLayer*);
 void         jfn_cef_layer_go_back(const JfnCefLayer*);
 void         jfn_cef_layer_go_forward(const JfnCefLayer*);
 void         jfn_cef_layer_set_focus(const JfnCefLayer*, bool focus);
+void         jfn_cef_layer_set_zoom_level(const JfnCefLayer*, double level);
 void         jfn_cef_layer_send_key_event(const JfnCefLayer*, int type_, uint32_t modifiers,
                                           int windows_key_code, int native_key_code,
                                           bool is_system_key, uint16_t character,
@@ -161,6 +162,7 @@ public:
     void goBack() { jfn_cef_layer_go_back(rs_); }
     void goForward() { jfn_cef_layer_go_forward(rs_); }
     void setFocus(bool f) { jfn_cef_layer_set_focus(rs_, f); }
+    void setZoomLevel(double level) { jfn_cef_layer_set_zoom_level(rs_, level); }
     void sendKeyEvent(int type_, uint32_t modifiers, int windows_key_code,
                       int native_key_code, bool is_system_key,
                       uint16_t character, uint16_t unmodified_character) {

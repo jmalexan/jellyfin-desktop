@@ -672,10 +672,17 @@ int main(int argc, char* argv[]) {
     boot.audio_exclusive          = args.audio_exclusive;
     boot.audio_channels           = args.audio_channels.empty()
                                   ? nullptr : args.audio_channels.c_str();
-    boot.geometry                 = boot_geometry.c_str();
-    boot.force_window_position    = boot_force_position;
-    boot.window_maximized_at_boot = boot_window_max;
-    boot.fullscreen_at_boot       = saved.launchFullscreen();
+    // mpv on Windows mishandles --fullscreen + --geometry at startup:
+    // it applies the borderless fullscreen style but leaves the window at
+    // the geometry's windowed size, which then desyncs CEF from the actual
+    // window. When launching fullscreen, suppress the geometry / position /
+    // maximized options so mpv sizes to the monitor; the saved windowed
+    // geometry stays on disk for the next launch with launchFullscreen off.
+    bool launching_fullscreen     = saved.launchFullscreen();
+    boot.geometry                 = launching_fullscreen ? nullptr : boot_geometry.c_str();
+    boot.force_window_position    = !launching_fullscreen && boot_force_position;
+    boot.window_maximized_at_boot = !launching_fullscreen && boot_window_max;
+    boot.fullscreen_at_boot       = launching_fullscreen;
     boot.mpv_log_level            = mpv_log_level;
 
     mpv_handle* raw = jfn_mpv_handle_init(&boot);
@@ -721,7 +728,10 @@ int main(int argc, char* argv[]) {
     // osd_pw/osd_ph atomics from a non-mpv-event source.
     // The poll below reads the atomics every iteration to pick up the
     // value regardless of whether a mpv property-change event arrived.
-    bool need_max = Settings::instance().windowGeometry().maximized;
+    // When launching fullscreen we suppress window-maximized at boot, so
+    // mpv won't flip the property — don't wait for it.
+    bool need_max = !launching_fullscreen
+                  && Settings::instance().windowGeometry().maximized;
     // On Wayland the initial logical-pixel computation in run_with_cef
     // needs cached_scale populated by the proxy's preferred_scale callback.
     // Wait for it explicitly — otherwise CEF starts at physical*1.0 size on

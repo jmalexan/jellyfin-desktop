@@ -56,7 +56,6 @@ pub struct JfnMpvBoot {
     pub geometry: *const c_char,
     pub force_window_position: bool,
     pub window_maximized_at_boot: bool,
-    pub fullscreen_at_boot: bool,
     /// libmpv log-message subscription level (`"no"`, `"error"`,
     /// `"warn"`, `"info"`, `"v"`, `"debug"`, `"trace"`).
     pub mpv_log_level: *const c_char,
@@ -206,9 +205,6 @@ fn apply_boot_options(handle: &Handle, boot: &JfnMpvBoot) -> crate::error::Resul
     }
     if boot.window_maximized_at_boot {
         set("window-maximized", "yes")?;
-    }
-    if boot.fullscreen_at_boot {
-        set_flag("fullscreen", true)?;
     }
     if let Some(spdif) = unsafe { cstr_opt(boot.audio_passthrough) } {
         if !spdif.is_empty() {
